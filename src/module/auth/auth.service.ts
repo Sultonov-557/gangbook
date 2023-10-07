@@ -1,30 +1,41 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
-import * as db from '../../database/database';
+import { Injectable } from "@nestjs/common";
+import * as db from "../../database/database";
+import * as jwt from "jsonwebtoken";
 
 @Injectable()
 export class AuthService {
-  async create(createAuthDto: CreateAuthDto) {
-    return await db.queryAll('INSET INTO user SET ?', createAuthDto);
-  }
-
-  async findAll() {
-    return await db.queryAll('SELECT * FROM user');
-  }
-
-  async findOne(id: number) {
-    return await db.queryAll(`SELECT * FROM user WHERE ID=${id}`);
-  }
-
-  async update(id: number, updateAuthDto: UpdateAuthDto) {
-    return await db.queryAll(
-      `UPDATE * FROM user SET ? WHERE ID=${id}`,
-      updateAuthDto,
+  async login(body) {
+    const { username, password } = body;
+    if (!username || !password) {
+      return "no password or username";
+    }
+    const user = await db.query(
+      `SELECT * FROM user WHERE username='${username}'`,
     );
+
+    if (!user || user.password != password) {
+      return "wrong password or username";
+    }
+    const token = jwt.sign({ ID: user.ID }, "secret", "10m");
+    console.log(token);
+
+    return token;
   }
 
-  async remove(id: number) {
-    return await db.queryAll(`DELETE * FROM user WHERE ID=${id}`);
+  async register(body) {
+    const { username, password } = body;
+    if (!username || !password) {
+      return "no username or password";
+    }
+
+    const user = await db.query(
+      `SELECT * FROM user WHERE username='${username}'`,
+    );
+
+    if (user) {
+      return "username already taken";
+    }
+
+    await db.query("INSERT INTO user SET ?", body);
   }
 }
