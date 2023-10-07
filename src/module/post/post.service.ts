@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { CreatePostDto } from './dto/create-post.dto';
+import { UpdatePostDto } from './dto/update-post.dto';
 import * as db from '../../database/database';
 
 @Injectable()
-export class AuthService {
-  async create(createAuthDto: CreateAuthDto) {
-    return await db.queryAll('INSET INTO user SET ?', createAuthDto);
+export class PostService {
+  async create(createPostDto: CreatePostDto) {
+    return await db.queryAll('INSET INTO user SET ?', createPostDto);
   }
 
   async findAll() {
@@ -17,10 +17,10 @@ export class AuthService {
     return await db.queryAll(`SELECT * FROM user WHERE ID=${id}`);
   }
 
-  async update(id: number, updateAuthDto: UpdateAuthDto) {
+  async update(id: number, updatePostDto: UpdatePostDto) {
     return await db.queryAll(
       `UPDATE * FROM user SET ? WHERE ID=${id}`,
-      updateAuthDto,
+      updatePostDto,
     );
   }
 

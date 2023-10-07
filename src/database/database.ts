@@ -11,7 +11,7 @@ export async function query(
   queryString: string,
   queryOptions?: object | [] | undefined,
 ) {
-  if (connection) throw new Error('database not connected');
+  if (!connection) throw new Error('database not connected');
 
   const output = await connection.query(queryString, queryOptions || undefined);
 
@@ -22,7 +22,7 @@ export async function queryAll(
   queryString: string,
   queryOptions?: object | [] | undefined,
 ) {
-  if (connection) throw new Error('database not connected');
+  if (!connection) throw new Error('database not connected');
 
   const output = await connection.query(queryString, queryOptions || undefined);
 
