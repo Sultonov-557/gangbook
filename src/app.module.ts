@@ -1,11 +1,18 @@
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { AuthModule } from './module/auth/auth.module';
-import { PostModule } from './module/post/post.module';
+import { Module } from "@nestjs/common";
+import { AppController } from "./app.controller";
+import { AppService } from "./app.service";
+import { AuthModule } from "./module/auth/auth.module";
+import { ServeStaticModule } from "@nestjs/serve-static";
+import { join } from "path";
 
 @Module({
-  imports: [AuthModule, PostModule],
+  imports: [
+    AuthModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, "..", "/src", "/public"),
+      serveStaticOptions: { extensions: ["html"] },
+    }),
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

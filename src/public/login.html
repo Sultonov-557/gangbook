@@ -1,0 +1,85 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Login</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        color: white;
+        background-color: #252525;
+      }
+      .container {
+        max-width: 400px;
+        margin: 0 auto;
+        margin-top: 10%;
+        padding: 20px;
+        border-radius: 20px;
+        box-shadow: 0 0 30px rgba(10, 10, 10, 0.5);
+      }
+      h2 {
+        text-align: center;
+      }
+      label {
+        display: block;
+        margin-bottom: 10px;
+      }
+      input[type="text"],
+      input[type="password"] {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #707070;
+        background-color: #404040;
+        color: white;
+        border-radius: 5px;
+        box-sizing: border-box;
+        margin-bottom: 10px;
+      }
+      input[type="submit"] {
+        width: 100%;
+        padding: 10px;
+        background-color: #4caf50;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 10px;
+      }
+    </style>
+    <script>
+      start();
+      async function start() {
+        const url = new URL(document.URL);
+        const params = new URLSearchParams(url.searchParams);
+        if (params.size != 2) return;
+
+        const username = params.get("username");
+        const password = params.get("password");
+
+        const req = await fetch("./api/auth/login", {
+          method: "post",
+          body: JSON.stringify({ username, password }),
+          headers: { "Content-Type": "application/json" },
+        });
+        const res = await req.json();
+        if (res.success) {
+          document.cookie = res.token;
+          window.open("/", "_self");
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Login</h2>
+      <form>
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" required />
+
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required />
+
+        <input type="submit" value="Login" />
+      </form>
+    </div>
+  </body>
+</html>
