@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import * as db from "../../database/database";
+import * as db from "../../config/database.config";
 import * as jwt from "jsonwebtoken";
 
 @Injectable()
@@ -10,16 +10,17 @@ export class AuthService {
     if (!username || !password) {
       return { success: false, error: "no password or username" };
     }
-    const user = await db.query(
-      `SELECT * FROM user WHERE username='${username}'`,
-    );
+
+    //TODO get user from database
+    const user: any = {};
 
     if (!user || user.password != password) {
       return { success: false, error: "wrong password or username" };
     }
 
     const token = jwt.sign({ ID: user.ID }, "secret", { expiresIn: "10h" });
-    await db.query(`UPDATE user SET ? WHERE ID="${user.ID}"`, { token });
+
+    //TODO set user token to database
 
     return { success: true, token };
   }
@@ -30,29 +31,36 @@ export class AuthService {
       return { success: false, error: "no username or password" };
     }
 
-    const user = await db.query(
-      `SELECT * FROM user WHERE username='${username}'`,
-    );
+    //TODO get user from database
+    const user: any = {};
 
     if (user) {
       return { success: false, error: "username already taken" };
     }
 
-    await db.query("INSERT INTO user SET ?", body);
+    //TODO insert new user to database
+
     return { success: true };
   }
 
   async verify(body) {
+    console.log(body);
+
     const { token } = body;
 
-    const { ID } = await jwt.verify(token, "secret");
+    try {
+      const { ID } = await jwt.verify(token, "secret");
 
-    const user = await db.query(`SELECT * FROM user WHERE ID=${ID}`);
+      //TODO get user from database
+      const user = {};
 
-    if (!user) {
+      if (!user) {
+        return { success: false };
+      }
+
+      return { success: true, ID };
+    } catch {
       return { success: false };
     }
-
-    return { success: true, ID };
   }
 }

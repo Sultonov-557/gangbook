@@ -1,10 +1,77 @@
 <!doctype html>
-<html lang="en">
+<html>
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Social Media App - Home</title>
+    <style>
+      /* CSS styles for the home page */
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #252525;
+        color: white;
+      }
+
+      #header {
+        background-color: #333;
+        color: #fff;
+        padding: 10px;
+        text-align: center;
+      }
+
+      #content {
+        margin-top: 20px;
+        padding: 20px;
+      }
+
+      .post {
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 10px;
+        margin-bottom: 10px;
+      }
+
+      .post .author {
+        font-weight: bold;
+      }
+
+      .post .timestamp {
+        color: #777;
+        font-size: 12px;
+      }
+
+      .post .message {
+        margin-top: 5px;
+      }
+    </style>
   </head>
   <body>
-    <h1>hello</h1>
+    <script>
+      start();
+      async function start() {
+        const token = document.cookie;
+
+        const req = await fetch("./api/auth/verify", {
+          method: "post",
+          body: JSON.stringify({ token }),
+          headers: { "Content-Type": "application/json" },
+        });
+
+        const res = await req.json();
+        if (!res.success) {
+          window.open("./login", "_self");
+        }
+      }
+    </script>
+
+    <div id="header">
+      <h1>GANGBOOK</h1>
+    </div>
+    <div id="content">
+      <div class="post">
+        <div class="author">gangster</div>
+        <div class="timestamp">October 10, 2023</div>
+        <div class="message">Hello world</div>
+      </div>
+      <!-- More posts... -->
+    </div>
   </body>
 </html>
