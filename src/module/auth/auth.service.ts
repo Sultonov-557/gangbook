@@ -1,5 +1,4 @@
 import { Injectable } from "@nestjs/common";
-import * as db from "../../config/database.config";
 import * as jwt from "jsonwebtoken";
 
 @Injectable()
