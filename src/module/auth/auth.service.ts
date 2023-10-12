@@ -1,8 +1,17 @@
 import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
 import * as jwt from "jsonwebtoken";
+import { Repository } from "typeorm";
+import { User } from "../user/entities/user.entity";
+import { log } from "console";
+import { compare } from "bcrypt";
 
 @Injectable()
 export class AuthService {
+  constructor(
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
+  ) {}
   async login(body) {
     const { username, password } = body;
 
@@ -10,16 +19,18 @@ export class AuthService {
       return { success: false, error: "no password or username" };
     }
 
-    //TODO get user from database
-    const user: any = {};
+    const user: User = (
+      await this.userRepository.find({
+        where: { username },
+      })
+    )[0];
 
-    if (!user || user.password != password) {
+    log(body, user);
+    if (!user || (await compare(user.password, password))) {
       return { success: false, error: "wrong password or username" };
     }
 
     const token = jwt.sign({ ID: user.ID }, "secret", { expiresIn: "10h" });
-
-    //TODO set user token to database
 
     return { success: true, token };
   }

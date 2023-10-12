@@ -1,4 +1,4 @@
-import { User } from "src/module/auth/entities/auth.entity";
+import { User } from "src/module/user/entities/user.entity";
 import { env } from "./env.config";
 import { MysqlConnectionOptions } from "typeorm/driver/mysql/MysqlConnectionOptions";
 
