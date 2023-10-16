@@ -41,34 +41,32 @@ export class AuthService {
       return { success: false, error: "no username or password" };
     }
 
-    //TODO get user from database
-    const user: any = {};
+    const userExists: boolean = await this.userRepository.exist({
+      where: { username },
+    });
 
-    if (user) {
+    if (userExists) {
       return { success: false, error: "username already taken" };
     }
 
-    //TODO insert new user to database
+    await this.userRepository.insert({ username, password });
 
     return { success: true };
   }
 
   async verify(body) {
-    console.log(body);
-
     const { token } = body;
 
     try {
       const { ID } = await jwt.verify(token, "secret");
 
-      //TODO get user from database
-      const user = {};
+      const userExists = await this.userRepository.exist({ where: { ID } });
 
-      if (!user) {
+      if (!userExists) {
         return { success: false };
       }
 
-      return { success: true, ID };
+      return { success: true };
     } catch {
       return { success: false };
     }
