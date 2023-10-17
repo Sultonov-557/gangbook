@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { hash } from "bcrypt";
@@ -40,12 +40,30 @@ export class UserService {
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
+    const userExists = await this.userRepo.exist({ where: { ID: id } });
+
+    if (!userExists) {
+      throw new BadRequestException(`user not exists`);
+    }
+
+    if (updateUserDto.email) {
+      const emailExists = await this.userRepo.exist({
+        where: { email: updateUserDto.email },
+      });
+
+      if (emailExists) {
+        throw new BadRequestException(
+          `user with email ${updateUserDto.email} already exists`,
+        );
+      }
+    }
+
     await this.userRepo.update(updateUserDto, { ID: id });
     return { success: true };
   }
 
   async remove(id: number) {
-    await this.userRepo.softRemove({ ID: id });
+    await this.userRepo.delete({ ID: id });
     return { success: true };
   }
 }

@@ -1,3 +1,5 @@
+import { Pagination } from "../utils/Pagination";
+
 export class ApiResponse {
   public status: number;
   public data: any;

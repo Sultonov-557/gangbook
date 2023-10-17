@@ -1,4 +1,4 @@
-class Pagination {
+export class Pagination {
   public items: [];
   public pageSize: number;
   public currentPage: number;
