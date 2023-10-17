@@ -5,18 +5,18 @@ export class ApiResponse {
   public data: any;
   public error: string;
   public date: Date = new Date();
-  public pagination: Pagination;
+  public pagination: Pagination | any;
   constructor(
     status: number,
     data: any,
-    error: string,
-    date: Date = new Date(),
     pagination: Pagination,
+    date: Date = new Date(),
+    error: string,
   ) {
     this.status = status;
     this.data = data;
     this.error = error;
     this.date = date;
-    this.pagination = pagination;
+    this.pagination = pagination.simplify;
   }
 }

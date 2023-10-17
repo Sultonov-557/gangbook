@@ -1,6 +1,6 @@
 import { RootEntity } from "src/common/entities/rootEntity";
 import { Role } from "src/common/enums/userRole.enum";
-import { Entity, Column } from "typeorm";
+import { Entity, Column, CreateDateColumn, UpdateDateColumn } from "typeorm";
 
 @Entity()
 export class User extends RootEntity {
@@ -18,4 +18,10 @@ export class User extends RootEntity {
 
   @Column({ unique: true })
   email: string;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

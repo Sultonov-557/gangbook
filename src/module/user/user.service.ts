@@ -1,3 +1,4 @@
+import { Pagination } from "./../../common/utils/Pagination";
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
@@ -5,6 +6,9 @@ import { hash } from "bcrypt";
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "./entities/user.entity";
 import { Repository } from "typeorm";
+import { findAllUserDto } from "./dto/findAll-user-dto";
+import { ApiResponse } from "src/common/http/ApiResponse";
+import { Ordering } from "src/common/enums/Ordering.enum";
 
 @Injectable()
 export class UserService {
@@ -28,8 +32,30 @@ export class UserService {
     }
   }
 
-  async findAll() {
-    return { success: true, data: await this.userRepo.find() };
+  async findAll(findAllUserDto: findAllUserDto) {
+    const { endDate, limit, orderBy, ordering, page, startDate } =
+      findAllUserDto;
+    const users = await this.userRepo
+      .createQueryBuilder("u")
+      .select()
+      .orderBy(orderBy || "id", ordering || Ordering.ASC)
+      .where("u.createdAt > :startDate", {
+        startDate: startDate || new Date("1970"),
+      })
+      .andWhere("u.createdAt < :endDate", {
+        endDate: endDate || new Date(),
+      })
+      .getMany();
+
+    const pagination = new Pagination(users, limit, page);
+
+    return new ApiResponse(
+      200,
+      pagination.currentPageItems,
+      pagination,
+      new Date(),
+      null,
+    );
   }
 
   async findOne(id: number) {

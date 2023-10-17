@@ -1,11 +1,11 @@
 export class Pagination {
-  public items: [];
+  public items: any[];
   public pageSize: number;
   public currentPage: number;
   public pageCount: number;
-  public currentPageItems: never[];
+  public currentPageItems: any;
 
-  constructor(items: [], pageSize: number = 10, currentPage: number = 1) {
+  constructor(items: any[], pageSize: number = 10, currentPage: number = 1) {
     this.items = items;
     this.pageSize = pageSize;
     this.currentPage = currentPage;
@@ -14,5 +14,10 @@ export class Pagination {
     const startIndex = (this.currentPage - 1) * this.pageSize;
     const endIndex = startIndex + this.pageSize;
     this.currentPageItems = this.items.slice(startIndex, endIndex);
+  }
+
+  get simplify() {
+    const { currentPage, pageCount, pageSize } = this;
+    return { currentPage, pageCount, pageSize };
   }
 }
