@@ -15,34 +15,37 @@ export class UserService {
       const { email, password, role, username } = createUserDto;
       const hashedPassword = await hash(password, 5);
 
-      const user = this.userRepo.create({
+      await this.userRepo.insert({
         email,
         password: hashedPassword,
         username,
         role,
       });
 
-      await this.userRepo.save(user);
-
       return { success: true };
     } catch (error) {
-      return { success: false, error };
+      throw new Error(error);
     }
   }
 
-  findAll() {
-    return `This action returns all user`;
+  async findAll() {
+    return { success: true, data: await this.userRepo.find() };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: number) {
+    return {
+      success: true,
+      data: await this.userRepo.findBy({ ID: id }),
+    };
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: number, updateUserDto: UpdateUserDto) {
+    await this.userRepo.update(updateUserDto, { ID: id });
+    return { success: true };
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: number) {
+    await this.userRepo.softRemove({ ID: id });
+    return { success: true };
   }
 }

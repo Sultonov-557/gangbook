@@ -1,10 +1,10 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import * as jwt from "jsonwebtoken";
 import { Repository } from "typeorm";
 import { User } from "../user/entities/user.entity";
 import { log } from "console";
-import { compare } from "bcrypt";
+import { compare, hash } from "bcrypt";
 
 @Injectable()
 export class AuthService {
@@ -16,7 +16,7 @@ export class AuthService {
     const { username, password } = body;
 
     if (!username || !password) {
-      return { success: false, error: "no password or username" };
+      throw new BadRequestException("username or password not given");
     }
 
     const user: User = (
@@ -27,7 +27,7 @@ export class AuthService {
 
     log(body, user);
     if (!user || (await compare(user.password, password))) {
-      return { success: false, error: "wrong password or username" };
+      throw new BadRequestException("username or password wrong");
     }
 
     const token = jwt.sign({ ID: user.ID }, "secret", { expiresIn: "10h" });
@@ -36,9 +36,9 @@ export class AuthService {
   }
 
   async register(body) {
-    const { username, password } = body;
-    if (!username || !password) {
-      return { success: false, error: "no username or password" };
+    const { username, password, email } = body;
+    if (!username || !password || !email) {
+      throw new BadRequestException("username or password or emile not given");
     }
 
     const userExists: boolean = await this.userRepository.exist({
@@ -46,10 +46,16 @@ export class AuthService {
     });
 
     if (userExists) {
-      return { success: false, error: "username already taken" };
+      throw new BadRequestException("username or emile already taken");
     }
 
-    await this.userRepository.insert({ username, password });
+    const hashedPassword = hash(password, 5);
+
+    await this.userRepository.insert({
+      username,
+      password: hashedPassword,
+      email,
+    });
 
     return { success: true };
   }

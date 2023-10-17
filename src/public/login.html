@@ -44,7 +44,13 @@
         cursor: pointer;
         margin-top: 10px;
       }
+      a {
+        color: white;
+        text-decoration: none;
+      }
     </style>
+  </head>
+  <body>
     <script>
       start();
       async function start() {
@@ -67,8 +73,7 @@
         }
       }
     </script>
-  </head>
-  <body>
+
     <div class="container">
       <h2>Login</h2>
       <form>
@@ -80,6 +85,9 @@
 
         <input type="submit" value="Login" />
       </form>
+      <p style="text-align: center; margin-top: 10px">
+        Don't have an account? <a href="register.html">Register</a>
+      </p>
     </div>
   </body>
 </html>
